@@ -1,0 +1,310 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-parchment: var(--parchment);
+  --color-ink: var(--ink);
+  --color-gold: var(--gold);
+  --color-ocean: var(--ocean);
+  --color-p1: var(--p1);
+  --color-p2: var(--p2);
+  --color-p3: var(--p3);
+  --color-p4: var(--p4);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+}
+
+:root {
+  --radius: 0.5rem;
+  /* Warm parchment + deep ocean palette */
+  --background: oklch(0.34 0.07 220);
+  --foreground: oklch(0.96 0.02 80);
+  --parchment: oklch(0.93 0.04 85);
+  --ink: oklch(0.22 0.04 50);
+  --gold: oklch(0.78 0.15 75);
+  --ocean: oklch(0.34 0.07 220);
+  --card: oklch(0.93 0.04 85);
+  --card-foreground: oklch(0.22 0.04 50);
+  --popover: oklch(0.93 0.04 85);
+  --popover-foreground: oklch(0.22 0.04 50);
+  --primary: oklch(0.78 0.15 75);
+  --primary-foreground: oklch(0.22 0.04 50);
+  --secondary: oklch(0.45 0.08 50);
+  --secondary-foreground: oklch(0.96 0.02 80);
+  --muted: oklch(0.85 0.03 85);
+  --muted-foreground: oklch(0.42 0.04 60);
+  --accent: oklch(0.65 0.18 30);
+  --accent-foreground: oklch(0.96 0.02 80);
+  --destructive: oklch(0.55 0.22 28);
+  --destructive-foreground: oklch(0.98 0.01 80);
+  --border: oklch(0.75 0.04 70);
+  --input: oklch(0.85 0.03 85);
+  --ring: oklch(0.78 0.15 75);
+
+  /* Player colors — keep in sync with src/game/colors.ts */
+  --p1: #E53935; /* red */
+  --p2: #1E88E5; /* blue */
+  --p3: #43A047; /* green */
+  --p4: #00ACC1; /* cyan */
+
+  --font-display: "Cinzel", "Cormorant Garamond", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
+}
+
+@layer base {
+  * { border-color: var(--color-border); }
+  html, body, #root { height: 100%; }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+    background-image:
+      radial-gradient(ellipse at top, oklch(0.40 0.08 220 / 0.9), transparent 70%),
+      radial-gradient(ellipse at bottom, oklch(0.20 0.05 220 / 0.95), transparent 70%);
+  }
+  h1, h2, h3, .display { font-family: var(--font-display); letter-spacing: 0.02em; }
+}
+
+@layer utilities {
+  .parchment {
+    background:
+      linear-gradient(135deg, oklch(0.95 0.04 85) 0%, oklch(0.88 0.05 75) 100%);
+    color: var(--color-ink);
+    box-shadow:
+      inset 0 0 0 1px oklch(0.65 0.06 60 / 0.4),
+      inset 0 1px 0 oklch(1 0 0 / 0.5),
+      0 8px 30px -10px oklch(0 0 0 / 0.5);
+  }
+  .ink-shadow { text-shadow: 0 1px 0 oklch(1 0 0 / 0.4); }
+  .gold-rim { box-shadow: 0 0 0 1px var(--color-gold), 0 0 20px -2px oklch(0.78 0.15 75 / 0.4); }
+
+  /* 3D dice */
+  .dice-cube {
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 180ms cubic-bezier(.2,.8,.2,1);
+  }
+
+  .dice-face {
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+  }
+
+  .dice-front  { transform: translateZ(calc(var(--dice-size) / 2)); }
+  .dice-back   { transform: rotateY(180deg) translateZ(calc(var(--dice-size) / 2)); }
+  .dice-right  { transform: rotateY(90deg) translateZ(calc(var(--dice-size) / 2)); }
+  .dice-left   { transform: rotateY(-90deg) translateZ(calc(var(--dice-size) / 2)); }
+  .dice-top    { transform: rotateX(90deg) translateZ(calc(var(--dice-size) / 2)); }
+  .dice-bottom { transform: rotateX(-90deg) translateZ(calc(var(--dice-size) / 2)); }
+
+  @keyframes diceTumble {
+    0% {
+      transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(.82);
+    }
+    12% {
+      transform: rotateX(calc(var(--dice-x) * .10))
+                 rotateY(calc(var(--dice-y) * .10))
+                 rotateZ(calc(var(--dice-z) * .10)) scale(1.04);
+    }
+    32% {
+      transform: rotateX(calc(var(--dice-x) * .34))
+                 rotateY(calc(var(--dice-y) * .34))
+                 rotateZ(calc(var(--dice-z) * .34)) scale(1.08);
+    }
+    55% {
+      transform: rotateX(calc(var(--dice-x) * .58))
+                 rotateY(calc(var(--dice-y) * .58))
+                 rotateZ(calc(var(--dice-z) * .58)) scale(1.03);
+    }
+    72% {
+      transform: rotateX(calc(var(--dice-x) * .76))
+                 rotateY(calc(var(--dice-y) * .76))
+                 rotateZ(calc(var(--dice-z) * .76)) scale(.99);
+    }
+    84% {
+      transform: rotateX(calc(var(--dice-x) * .88))
+                 rotateY(calc(var(--dice-y) * .88))
+                 rotateZ(calc(var(--dice-z) * .88)) scale(1.01);
+    }
+    92% {
+      transform: rotateX(calc(var(--dice-x) * .96))
+                 rotateY(calc(var(--dice-y) * .96))
+                 rotateZ(calc(var(--dice-z) * .96)) scale(1);
+    }
+    100% {
+      transform: rotateX(var(--dice-x))
+                 rotateY(var(--dice-y))
+                 rotateZ(var(--dice-z)) scale(1);
+    }
+  }
+
+  .dice-cube-rolling {
+    animation: diceTumble 1450ms cubic-bezier(.12,.72,.18,1) both;
+  }
+
+
+  /* Physical board throw: the wrapper travels on an arc and bounces on impact. */
+  @keyframes boardDiceThrow {
+    0% {
+      transform: translate3d(0, 0, 0) scale(.78);
+      opacity: .95;
+    }
+    10% {
+      transform: translate3d(calc(var(--throw-dx) * .055), calc(var(--throw-dy) * .055 - var(--throw-arc) * .62), 0) scale(1.02);
+    }
+    24% {
+      transform: translate3d(calc(var(--throw-dx) * .18), calc(var(--throw-dy) * .18 - var(--throw-arc)), 0) scale(1.08);
+    }
+    42% {
+      transform: translate3d(calc(var(--throw-dx) * .40), calc(var(--throw-dy) * .40 - var(--throw-arc) * .70), 0) scale(1.04);
+    }
+    58% {
+      transform: translate3d(calc(var(--throw-dx) * .62), calc(var(--throw-dy) * .62 - var(--throw-arc) * .28), 0) scale(1);
+    }
+    70% {
+      transform: translate3d(calc(var(--throw-dx) * .80), calc(var(--throw-dy) * .80 + 10px), 0) scale(.96);
+    }
+    78% {
+      transform: translate3d(calc(var(--throw-dx) * .90), calc(var(--throw-dy) * .90 - 15px), 0) scale(1.01);
+    }
+    85% {
+      transform: translate3d(calc(var(--throw-dx) * .96), calc(var(--throw-dy) * .96 + 6px), 0) scale(.985);
+    }
+    91% {
+      transform: translate3d(var(--throw-dx), calc(var(--throw-dy) - 5px), 0) scale(1.005);
+    }
+    96% {
+      transform: translate3d(var(--throw-dx), calc(var(--throw-dy) + 2px), 0) scale(.998);
+    }
+    100% {
+      transform: translate3d(var(--throw-dx), var(--throw-dy), 0) scale(1);
+      opacity: 1;
+    }
+  }
+
+
+  .board-die-throw {
+    animation: boardDiceThrow 1450ms cubic-bezier(.12,.72,.18,1) both;
+    transform-origin: center bottom;
+    will-change: transform;
+  }
+
+  .board-die-landed {
+    transform: translate3d(var(--land-x), var(--land-y), 0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dice-cube-rolling {
+      animation: none;
+    }
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    70% { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .pop-in { animation: popIn 0.3s ease-out; }
+
+  @keyframes hexGlowPulse {
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 0.85; }
+  }
+  .hex-glow { animation: hexGlowPulse 0.7s ease-in-out 2; transform-origin: center; }
+
+  @keyframes floatUp {
+    0% { opacity: 0; transform: translateY(0); }
+    20% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-26px); }
+  }
+  .float-gain { animation: floatUp 0.8s ease-out forwards; }
+
+  @keyframes validPulse {
+    0%, 100% { transform: scale(1); opacity: 0.85; }
+    50% { transform: scale(1.35); opacity: 0.45; }
+  }
+  .valid-pulse { animation: validPulse 1.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+
+  @keyframes edgeGlow {
+    0%, 100% { opacity: 0.45; }
+    50% { opacity: 0.9; }
+  }
+  .edge-glow { animation: edgeGlow 1.2s ease-in-out infinite; }
+}
+
+/* +/- flash on the hand bar when a resource count changes */
+@keyframes handDelta {
+  0% { opacity: 0; transform: translateY(8px) scale(0.8); }
+  15% { opacity: 1; transform: translateY(0) scale(1.08); }
+  80% { opacity: 1; transform: translateY(-2px) scale(1); }
+  100% { opacity: 0; transform: translateY(-14px) scale(1); }
+}
+.hand-delta { animation: handDelta 1.9s ease-out forwards; }
+
+/* Event banner: slides in, holds, fades out (about 3.2s) */
+@keyframes eventBanner {
+  0% { opacity: 0; transform: translate(-50%, -14px) scale(0.96); }
+  8% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  88% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -8px) scale(1); }
+}
+@keyframes eventBannerFade {
+  0% { opacity: 0; transform: translate(-50%, 0); }
+  8% { opacity: 1; transform: translate(-50%, 0); }
+  88% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, 0); }
+}
+.event-banner { animation: eventBanner 3.2s ease-out forwards; }
+@media (prefers-reduced-motion: reduce) {
+  .event-banner { animation: eventBannerFade 3.2s linear forwards; }
+}
+
+/* High contrast display option (Display menu). The board itself is restyled in HexBoard. */
+[data-contrast="high"] .parchment {
+  background: #fffdf5;
+  color: #000;
+  border: 2px solid #000;
+}
+[data-contrast="high"] .opacity-50,
+[data-contrast="high"] .opacity-60,
+[data-contrast="high"] .opacity-70,
+[data-contrast="high"] .opacity-75,
+[data-contrast="high"] .opacity-80,
+[data-contrast="high"] .opacity-90 {
+  opacity: 1 !important;
+}
+[data-contrast="high"] header,
+[data-contrast="high"] aside,
+[data-contrast="high"] .border-b {
+  border-color: rgba(255, 255, 255, 0.7) !important;
+}
+[data-contrast="high"] :focus-visible {
+  outline: 3px solid #ffd400;
+  outline-offset: 2px;
+}
