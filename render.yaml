@@ -1,0 +1,7 @@
+# Optional: Render "Blueprint". You can also create the service by hand (see README-ONLINE.md).
+services:
+  - type: web
+    name: isle-of-embers
+    runtime: docker
+    plan: free            # change to a paid plan to stop the service from sleeping
+    healthCheckPath: /healthz
